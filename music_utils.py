@@ -113,13 +113,14 @@ def _is_white(px):
     return all(c > 240 for c in px[:3])
 
 
-def make_blank_stave(answer_img_path, output_path, clef_protect_pct=0.22):
+def make_blank_stave(answer_img_path, output_path):
     """
     Derive a blank stave PNG from an answer stave PNG.
 
-    Keeps the treble clef and key signature (leftmost clef_protect_pct of the image)
-    and the 5 staff lines, then whites out everything else (noteheads, stems,
-    accidentals, barlines) so the student has a blank stave to write on.
+    Detects the end of the treble clef / key signature region by finding the
+    first significant gap (≥15 consecutive blank columns) after the clef, then
+    whites out all non-staff-line pixels to the right of that gap.  This works
+    regardless of stave width — short chord staves and wide scale staves alike.
     """
     img = Image.open(answer_img_path).convert('RGB')
     pixels = img.load()
@@ -132,7 +133,29 @@ def make_blank_stave(answer_img_path, output_path, clef_protect_pct=0.22):
         if dark > w * 0.35:
             staff_rows.add(y)
 
-    note_start = int(w * clef_protect_pct)
+    # Find the first long gap after the treble clef to locate where notes begin.
+    # A "gap column" has no non-staff-line dark pixels.
+    GAP_THRESHOLD = 15   # consecutive blank columns = end of clef/keysig
+    MIN_CLEF_WIDTH = int(w * 0.08)   # clef is never less than 8% of image width
+
+    gap_start = None
+    gap_len   = 0
+    note_start = int(w * 0.20)  # fallback if gap detection fails
+
+    for x in range(MIN_CLEF_WIDTH, w):
+        non_staff = sum(1 for y in range(h)
+                        if y not in staff_rows and pixels[x, y][0] < 80)
+        if non_staff == 0:
+            if gap_start is None:
+                gap_start = x
+            gap_len += 1
+            if gap_len >= GAP_THRESHOLD:
+                # Gap found — protect everything up to where gap started
+                note_start = gap_start
+                break
+        else:
+            gap_start = None
+            gap_len   = 0
 
     result = img.copy()
     rp = result.load()

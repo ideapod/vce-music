@@ -41,6 +41,20 @@ Music notation is written as [ABC notation](https://abcnotation.com/), rendered 
 
 For scales, blank staves are derived from the answer stave image: the treble clef and key signature are preserved (left 22% of the image) and everything else except the five staff lines is whited out with PIL.
 
+### Chords
+
+Two worksheets generated together (15 random questions each):
+
+- **Write**: Text prompt (e.g. "Write a D augmented chord") with a blank stave — student writes the chord. Answer page follows.
+- **Identify**: Chord shown on a stave with key signature — student writes the chord name on the line below. Answer page follows.
+
+Covers major, minor, diminished, augmented chords in all VCE keys (up to 2 sharps and 2 flats), root position.
+
+```bash
+python3 generate_chords_worksheet.py              # chords_write_worksheet.pdf + chords_identify_worksheet.pdf
+python3 generate_chords_worksheet.py --seed=99    # different random set
+```
+
 ## VCE Exam Scope
 
 From `Unit 1- Exam Checklist.docx`:

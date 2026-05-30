@@ -18,6 +18,10 @@ python3 generate_intervals_worksheet.py --seed=99        # different random set
 python3 generate_scales_worksheet.py
 python3 generate_scales_worksheet.py --select            # random 10 scales (2 pages)
 python3 generate_scales_worksheet.py --select --seed=5
+
+# Chords worksheets (2 PDFs: write + identify, 15 questions each, 2 pages each)
+python3 generate_chords_worksheet.py
+python3 generate_chords_worksheet.py --seed=99
 ```
 
 ## Dependencies
@@ -45,6 +49,13 @@ Question generation computes the upper note from (lower note, semitone count, di
 ### Scales script: `generate_scales_worksheet.py`
 
 Scale data is defined explicitly (ABC note strings + K: key field) for all 20 scales. The answer stave is rendered first, then `make_blank_stave()` strips the notes to produce the question stave — this guarantees blank and answer staves are identical in size. The PDF is structured as all question pages followed by all answer pages.
+
+### Chords script: `generate_chords_worksheet.py`
+
+20 chords defined (5 major, 5 minor, 5 diminished, 5 augmented) covering all VCE keys up to 2 sharps/flats. Selects a random 15 ensuring ≥3 of each type. Produces two PDFs:
+
+- **`chords_write_worksheet.pdf`**: Text prompt ("Write a D augmented chord") + blank stave, then answer page. Blank stave is derived by rendering the chord at 22cm width so the gap-detection in `make_blank_stave()` can reliably find the clef boundary (at 12cm the chord lands too close to the clef).
+- **`chords_identify_worksheet.pdf`**: Chord shown on stave with appropriate key signature, student writes name on line below, then answer page. Layout is 3 cols × 5 rows per page.
 
 ## ABC Notation Conventions
 

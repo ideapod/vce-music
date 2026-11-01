@@ -1,6 +1,6 @@
 # VCE Music Unit 1 — Worksheet Generator
 
-Printable practice worksheets for VCE Music Unit 1 theory, generated from Python scripts. Currently covers intervals and scales.
+Printable practice worksheets for VCE Music Unit 1 theory, generated from Python scripts. Covers intervals, scales, chords, and full theory revision sheets (one per key).
 
 ## Requirements
 
@@ -35,12 +35,6 @@ python3 generate_scales_worksheet.py --select        # random 10 scales (2 pages
 python3 generate_scales_worksheet.py --select --seed=5
 ```
 
-## How It Works
-
-Music notation is written as [ABC notation](https://abcnotation.com/), rendered to PostScript by `abcm2ps`, converted to PNG by Ghostscript, then assembled into a PDF by ReportLab. Shared rendering utilities live in `music_utils.py`.
-
-For scales, blank staves are derived from the answer stave image: the treble clef and key signature are preserved (left 22% of the image) and everything else except the five staff lines is whited out with PIL.
-
 ### Chords
 
 Two worksheets generated together (15 random questions each):
@@ -54,6 +48,40 @@ Covers major, minor, diminished, augmented chords in all VCE keys (up to 2 sharp
 python3 generate_chords_worksheet.py              # chords_write_worksheet.pdf + chords_identify_worksheet.pdf
 python3 generate_chords_worksheet.py --seed=99    # different random set
 ```
+
+### Theory revision sheets
+
+One mixed-topic revision sheet per key, modelled on the class Year 11 Theory Sheets: #1 C, #2 G, #3 F (reproductions of the originals, without answers) plus #4 D and #5 Bb in the same format. Each sheet has its own answer key, with the answers in blue.
+
+Every sheet covers:
+
+- **Intervals**: write 12 intervals above the tonic (Major 2nd to min 7th, including Aug 4th and Dim 5th)
+- **Scales**: major descending, major pentatonic, and natural minor and minor pentatonic on the relative minor, each starting from a given note and rhythmic value
+- **Chords**: major, augmented, minor and diminished triads on the tonic
+- **Key signatures**: name or draw key signatures (up to 2♯/2♭) with their relative minors
+
+A theory section follows, rotating between keys:
+
+| Sheets | Theory section |
+|--------|----------------|
+| C, D | Chord quality on each scale degree, name + write the chord progression, Perfect and Plagal cadences, 4 compositional devices |
+| G, Bb | Write + name the chord progression, define the 7 musical elements (2D, 2T, SAP) |
+| F | Write the chord progression, tone colour (name an instrument for Bright / Aspirate / Mellow / Dark) |
+
+The bonus `*` items from the originals (melodic minor, blues scale, 7th chords) are not included. Sheets run onto a second page only when the content needs it.
+
+```bash
+python3 generate_theory_sheets.py             # all 5 keys → theory_sheets/*.pdf + *_ANSWERS.pdf
+python3 generate_theory_sheets.py --key=Bb    # one key (C, G, F, D or Bb)
+```
+
+## How It Works
+
+Music notation is written as [ABC notation](https://abcnotation.com/), rendered to PostScript by `abcm2ps`, converted to PNG by Ghostscript, then assembled into a PDF by ReportLab. Shared rendering utilities live in `music_utils.py`.
+
+For scales, blank staves are derived from the answer stave image: the treble clef and key signature are preserved (left 22% of the image) and everything else except the five staff lines is whited out with PIL.
+
+The theory sheets render each row of bars as one justified ABC line, then detect the barline positions in the image so ReportLab can centre each label under its bar.
 
 ## VCE Exam Scope
 

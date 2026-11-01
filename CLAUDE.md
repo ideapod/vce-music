@@ -22,6 +22,10 @@ python3 generate_scales_worksheet.py --select --seed=5
 # Chords worksheets (2 PDFs: write + identify, 15 questions each, 2 pages each)
 python3 generate_chords_worksheet.py
 python3 generate_chords_worksheet.py --seed=99
+
+# Theory revision sheets (C, G, F, D, Bb major) + answer keys → theory_sheets/
+python3 generate_theory_sheets.py
+python3 generate_theory_sheets.py --key=Bb      # one key only
 ```
 
 ## Dependencies
@@ -56,6 +60,10 @@ Scale data is defined explicitly (ABC note strings + K: key field) for all 20 sc
 
 - **`chords_write_worksheet.pdf`**: Text prompt ("Write a D augmented chord") + blank stave, then answer page. Blank stave is derived by rendering the chord at 22cm width so the gap-detection in `make_blank_stave()` can reliably find the clef boundary (at 12cm the chord lands too close to the clef).
 - **`chords_identify_worksheet.pdf`**: Chord shown on stave with appropriate key signature, student writes name on line below, then answer page. Layout is 3 cols × 5 rows per page.
+
+### Theory sheets script: `generate_theory_sheets.py`
+
+Reproduces the teacher's Year 11 Theory Sheets #1–3 (C, G, F major) and extends them to D and Bb (#4, #5). Every sheet has the same front (12 intervals, 4 scales, 4 triads, key signatures). The back section rotates: C/D get type A (progression qualities, name+write progression, cadences, compositional devices), G/Bb get type B (write+name progression, musical elements), F gets type C (write progression, tone colour). Bonus `*` items from the originals are deliberately omitted. Minor scales use the relative minor (in exam scope). Each row is rendered with its own renderer (`render_stave`), not `music_utils`: `%%stretchlast` justifies the row, `%%staffnonote 2` makes all-invisible-rest (blank) staves draw, and barline x-positions are detected from the PNG so ReportLab can centre labels under each bar. Content flows onto a second page only when needed.
 
 ## ABC Notation Conventions
 
